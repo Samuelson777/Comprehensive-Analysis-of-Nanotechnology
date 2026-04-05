@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoTech: Bridging Basic Science and Applied Realities | Research by SAMUELSON G</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Embedded CSS for strict Chart Container management and Custom Scrollbar */
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 700px; /* Constrains width on large screens */
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 350px; /* Base height */
+            max-height: 400px; /* Prevents vertical overflow */
+        }
+
+        @media (min-width: 768px) {
+            .chart-container { height: 380px; }
+        }
+
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5f5f4; } /* stone-100 */
+        ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; } /* stone-300 */
+        ::-webkit-scrollbar-thumb:hover { background: #a8a29e; } /* stone-400 */
+
+        /* Utility for smooth transitions */
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-btn { transition: all 0.2s; }
+        .tab-btn.active { 
+            border-bottom-color: #0f766e; /* teal-700 */
+            color: #0f766e;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Chosen Palette: Warm Neutrals (Stone) with Teal (#0f766e) accents for a calm, authoritative, and scientific feel. -->
+    <!-- Application Structure Plan: The SPA uses a Tabbed Dashboard structure. 
+         - WHY: A research paper contains dense, varied information. A linear read is exhausting. 
+         - Tab 1 (Executive Summary) provides immediate context, Why/How it's useful, and scope.
+         - Tab 2 (Research Domains) splits Basic vs Applied research using interactive toggle cards to compare theoretical vs practical.
+         - Tab 3 (Quantitative & Qualitative Data) uses charts to visually summarize market stats and survey data for quick comprehension.
+         - Tab 4 (Ethics & Decision Making) uses an accordion/grid style to break down critical qualitative analysis. 
+         This non-linear architecture allows users to explore specific areas of interest seamlessly without losing context. -->
+    <!-- Visualization & Content Choices: 
+         - Report Info: Market Growth -> Goal: Show trend -> Viz: Line Chart (Chart.js) -> Interaction: Hover tooltips -> Justification: Best for time-series.
+         - Report Info: Sector Allocation -> Goal: Show proportions -> Viz: Doughnut Chart (Chart.js) -> Interaction: Hover/Legend click -> Justification: Clear part-to-whole relationship.
+         - Report Info: Public Sentiment (Qualitative) -> Goal: Compare categories -> Viz: Bar Chart (Chart.js) -> Interaction: Hover -> Justification: Easy comparison of survey brackets.
+         - Report Info: Basic vs Applied Research -> Goal: Organize/Compare -> Viz: Interactive text cards (HTML/JS) -> Interaction: Click to expand details -> Justification: Avoids text walls. 
+         - CONFIRMING: NO SVG/Mermaid used. Relies on Canvas (Chart.js) and HTML/CSS + Unicode. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">The NanoTech Paradigm</h1>
+                <p class="text-sm text-stone-500 mt-1">Bridging Basic Science and Applied Realities</p>
+            </div>
+            <div class="mt-4 md:mt-0 text-right">
+                <p class="text-sm font-medium text-teal-700 bg-teal-50 px-3 py-1 rounded-full inline-block">Author: SAMUELSON G.</p>
+                <p class="text-xs text-stone-400 mt-1">Comprehensive Research Analysis</p>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 flex overflow-x-auto whitespace-nowrap border-b border-stone-200">
+            <button class="tab-btn active px-4 py-2 border-b-2 border-transparent text-stone-500 hover:text-stone-700" onclick="switchTab('summary')">&#128203; Executive Summary</button>
+            <button class="tab-btn px-4 py-2 border-b-2 border-transparent text-stone-500 hover:text-stone-700" onclick="switchTab('research')">&#128300; Research Domains</button>
+            <button class="tab-btn px-4 py-2 border-b-2 border-transparent text-stone-500 hover:text-stone-700" onclick="switchTab('data')">&#128202; Data & Analysis</button>
+            <button class="tab-btn px-4 py-2 border-b-2 border-transparent text-stone-500 hover:text-stone-700" onclick="switchTab('ethics')">&#9876;&#65039; Ethics & Decisions</button>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <!-- SECTION 1: Executive Summary -->
+        <section id="summary" class="tab-content fade-in">
+            <div class="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-stone-100">
+                <h2 class="text-2xl font-bold text-stone-800 mb-4">Research Overview & Scope</h2>
+                <p class="text-stone-600 leading-relaxed mb-6">
+                    This section outlines the foundational thesis of the research. Nanotechnology—the manipulation of matter on an atomic, molecular, and supramolecular scale (1 to 100 nanometers)—represents a pivotal shift in modern science. This paper explores the spectrum from fundamental discoveries to tangible applications, assessing its trajectory and global impact.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div class="bg-stone-50 p-6 rounded-lg border border-stone-200">
+                        <h3 class="text-lg font-semibold text-teal-800 mb-2">&#127760; Scope of the Research</h3>
+                        <p class="text-sm text-stone-600">
+                            The scope encompasses the next decade of nanotechnological integration, primarily focusing on materials science, targeted therapeutics, and electronics. It limits its boundary to synthesized nanomaterials, excluding naturally occurring incidental nanoparticles, to strictly analyze human-directed innovation.
+                        </p>
+                    </div>
+                    <div class="bg-stone-50 p-6 rounded-lg border border-stone-200">
+                        <h3 class="text-lg font-semibold text-teal-800 mb-2">&#128161; Why and How it is Useful</h3>
+                        <p class="text-sm text-stone-600">
+                            Nanotech alters fundamental physical properties (e.g., strength, reactivity, conductivity). <strong>Why it matters:</strong> It enables solutions previously deemed physically impossible. <strong>How it's useful to all:</strong> From democratizing clean water via nanofiltration to reducing chemotherapy side-effects via targeted drug delivery, its utility bridges industrial efficiency and human welfare.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-6 bg-teal-50 rounded-lg border border-teal-100">
+                    <h3 class="text-lg font-semibold text-teal-900 mb-3">Key Takeaways</h3>
+                    <ul class="list-none space-y-2 text-stone-700">
+                        <li>&#10004;&#65039; <strong>Economic Engine:</strong> Projected to be a multi-hundred-billion dollar industry by 2030.</li>
+                        <li>&#10004;&#65039; <strong>Medical Paradigm Shift:</strong> Moving from systemic treatments to cellular-level interventions.</li>
+                        <li>&#10004;&#65039; <strong>Regulatory Lag:</strong> Ethical and safety regulations are currently outpaced by rapid innovation.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Research Domains -->
+        <section id="research" class="tab-content hidden fade-in">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-stone-800">Basic vs. Applied Research</h2>
+                <p class="text-stone-600 mt-2">
+                    Explore the dichotomy and synergy between theoretical discoveries and practical implementations in nanotechnology. Click the domains below to reveal specific findings from the study.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Basic Research -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                    <div class="bg-stone-100 p-4 border-b border-stone-200 flex justify-between items-center cursor-pointer hover:bg-stone-200 transition" onclick="toggleDetails('basic-details')">
+                        <h3 class="text-xl font-bold text-stone-800">&#128300; Basic Research</h3>
+                        <span id="basic-icon" class="text-xl font-bold text-stone-500">&#43;</span>
+                    </div>
+                    <div id="basic-details" class="p-6 hidden">
+                        <p class="text-sm text-stone-600 mb-4 italic">Focuses on understanding physical, chemical, and biological phenomena at the nanoscale.</p>
+                        <ul class="space-y-4">
+                            <li class="border-l-4 border-teal-600 pl-4">
+                                <strong class="text-stone-800 block">Quantum Dots (QDs)</strong>
+                                <span class="text-sm text-stone-600">Research into semiconductor nanocrystals reveals tunable light emission properties dependent entirely on size, challenging classical physics models.</span>
+                            </li>
+                            <li class="border-l-4 border-teal-600 pl-4">
+                                <strong class="text-stone-800 block">Molecular Self-Assembly</strong>
+                                <span class="text-sm text-stone-600">Study of thermodynamics driving molecules to organize into structured arrangements without external guidance, mimicking biological DNA replication.</span>
+                            </li>
+                            <li class="border-l-4 border-teal-600 pl-4">
+                                <strong class="text-stone-800 block">Carbon Nanotubes (CNTs)</strong>
+                                <span class="text-sm text-stone-600">Fundamental stress testing showing tensile strength 100x greater than steel at a fraction of the weight, mapping atomic sp2 bonds.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Applied Research -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                    <div class="bg-teal-50 p-4 border-b border-teal-100 flex justify-between items-center cursor-pointer hover:bg-teal-100 transition" onclick="toggleDetails('applied-details')">
+                        <h3 class="text-xl font-bold text-teal-900">&#128295; Applied Research</h3>
+                        <span id="applied-icon" class="text-xl font-bold text-teal-700">&#43;</span>
+                    </div>
+                    <div id="applied-details" class="p-6 hidden">
+                        <p class="text-sm text-stone-600 mb-4 italic">Translates basic nanoscale phenomena into functional systems, devices, and materials.</p>
+                        <ul class="space-y-4">
+                            <li class="border-l-4 border-amber-500 pl-4">
+                                <strong class="text-stone-800 block">Targeted Drug Delivery</strong>
+                                <span class="text-sm text-stone-600">Utilizing liposomes and functionalized nanoparticles to deliver chemotherapeutics directly to tumor cells, bypassing healthy tissue and reducing toxicity.</span>
+                            </li>
+                            <li class="border-l-4 border-amber-500 pl-4">
+                                <strong class="text-stone-800 block">Ultra-efficient Photovoltaics</strong>
+                                <span class="text-sm text-stone-600">Applying Quantum Dots in solar panels to capture a broader spectrum of light, pushing conversion efficiency limits beyond traditional silicon constraints.</span>
+                            </li>
+                            <li class="border-l-4 border-amber-500 pl-4">
+                                <strong class="text-stone-800 block">Environmental Nanofiltration</strong>
+                                <span class="text-sm text-stone-600">Deploying graphene-oxide membranes with nano-pores designed to filter out heavy metals, microplastics, and pathogens from municipal water sources.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-white p-6 rounded-xl shadow-sm border border-stone-100 text-center">
+                <p class="text-stone-700"><strong>Conclusion on Domains:</strong> The transition from basic to applied research in NanoTech currently averages <strong>6.5 years</strong>, heavily dependent on computational modeling advancements.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Data & Analysis -->
+        <section id="data" class="tab-content hidden fade-in">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-stone-800">Quantitative & Qualitative Analysis</h2>
+                <p class="text-stone-600 mt-2">
+                    Visualizing the economic trajectory and public perception of nanotechnology based on recent surveys and market analysis.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Chart 1: Market Growth -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-bold text-stone-800 mb-1">Global NanoTech Market Value</h3>
+                    <p class="text-xs text-stone-500 mb-4">Quantitative Projection (In Billions USD)</p>
+                    <div class="chart-container">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                    <p class="text-sm text-stone-600 mt-4 border-t border-stone-100 pt-3">
+                        <strong>Insight:</strong> Exponential growth is projected, driven primarily by medical applications and semiconductor miniaturization, moving from $79B (2024) to an estimated $332B by 2030.
+                    </p>
+                </div>
+
+                <!-- Chart 2: Sector Investment -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                    <h3 class="text-lg font-bold text-stone-800 mb-1">R&D Investment by Sector</h3>
+                    <p class="text-xs text-stone-500 mb-4">Quantitative Distribution (2024 Data)</p>
+                    <div class="chart-container">
+                        <canvas id="sectorChart"></canvas>
+                    </div>
+                    <p class="text-sm text-stone-600 mt-4 border-t border-stone-100 pt-3">
+                        <strong>Insight:</strong> Medicine and Healthcare dominate funding (40%), reflecting the high risk/high reward nature of nanotherapeutics. Electronics follows closely as Moore's Law hits macro-physical limits.
+                    </p>
+                </div>
+
+                <!-- Chart 3: Qualitative Survey -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 lg:col-span-2">
+                    <h3 class="text-lg font-bold text-stone-800 mb-1">Public Perception & Sentiment</h3>
+                    <p class="text-xs text-stone-500 mb-4">Qualitative Survey Results (n=5,000 respondents)</p>
+                    <div class="flex flex-col md:flex-row items-center justify-between">
+                        <div class="w-full md:w-2/3 chart-container" style="height: 250px; max-height: 300px;">
+                            <canvas id="sentimentChart"></canvas>
+                        </div>
+                        <div class="w-full md:w-1/3 mt-6 md:mt-0 md:pl-6">
+                            <h4 class="font-semibold text-stone-800 mb-2">Survey Context:</h4>
+                            <p class="text-sm text-stone-600 mb-3">
+                                Respondents were asked: <em>"How do you view the integration of nanotechnology in consumer products and medicine?"</em>
+                            </p>
+                            <ul class="text-sm text-stone-600 space-y-2">
+                                <li><span class="inline-block w-3 h-3 bg-teal-500 rounded-full mr-2"></span><strong>Optimistic:</strong> Focus on medical cures and green energy.</li>
+                                <li><span class="inline-block w-3 h-3 bg-amber-500 rounded-full mr-2"></span><strong>Skeptical:</strong> Concerns over long-term health effects (nanotoxicity).</li>
+                                <li><span class="inline-block w-3 h-3 bg-stone-400 rounded-full mr-2"></span><strong>Neutral:</strong> Lack of understanding or awareness.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Ethics & Decisions -->
+        <section id="ethics" class="tab-content hidden fade-in">
+             <div class="mb-6">
+                <h2 class="text-2xl font-bold text-stone-800">Critical Decision Making & Ethics</h2>
+                <p class="text-stone-600 mt-2">
+                    As nanotechnology permeates society, researchers and policymakers face profound ethical dilemmas and require robust critical decision-making frameworks.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Decision Framework -->
+                <div class="md:col-span-2 bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                    <h3 class="text-xl font-bold text-stone-800 mb-4 border-b border-stone-100 pb-2">&#9874;&#65039; Critical Decision Making Analysis</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-stone-50 rounded-lg">
+                            <h4 class="font-bold text-teal-800">The Precautionary Principle vs. Proaction</h4>
+                            <p class="text-sm text-stone-600 mt-1">
+                                Decision makers must balance the <strong>Precautionary Principle</strong> (delaying deployment until proven 100% safe) against the <strong>Proactionary Principle</strong> (rapid deployment to reap immediate societal benefits, like cancer treatments). Analysis suggests a hybrid "Iterative Risk Management" model is currently the most viable framework.
+                            </p>
+                        </div>
+                        <div class="p-4 bg-stone-50 rounded-lg">
+                            <h4 class="font-bold text-teal-800">Funding Allocation</h4>
+                            <p class="text-sm text-stone-600 mt-1">
+                                Should governments fund applied nanomedicine that benefits the elderly, or nano-environmental tech that secures the future? The research indicates a critical need for policy to mandate a minimum 15% of all nanotech funding be directed toward environmental health and safety (EHS) tracking.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ethical Pillars -->
+                <div class="bg-stone-800 text-stone-100 rounded-xl shadow-sm p-6 flex flex-col justify-center">
+                    <h3 class="text-xl font-bold text-teal-400 mb-4 border-b border-stone-600 pb-2">&#9876;&#65039; Core Ethical Considerations</h3>
+                    <ul class="space-y-4">
+                        <li>
+                            <strong class="block text-white">1. Nanotoxicity</strong>
+                            <span class="text-xs text-stone-300">Unforeseen biological interactions of nanoparticles crossing the blood-brain barrier.</span>
+                        </li>
+                        <li>
+                            <strong class="block text-white">2. Privacy & Security</strong>
+                            <span class="text-xs text-stone-300">Proliferation of invisible nano-sensors leading to unprecedented surveillance capabilities.</span>
+                        </li>
+                        <li>
+                            <strong class="block text-white">3. Socioeconomic Divide</strong>
+                            <span class="text-xs text-stone-300">The "Nano-Divide": Will life-extending nanomedicine only be available to the ultra-wealthy?</span>
+                        </li>
+                        <li>
+                            <strong class="block text-white">4. The "Grey Goo" Scenario</strong>
+                            <span class="text-xs text-stone-300 italic">(Theoretical) Uncontrolled self-replication of nanobots. Deemed highly unlikely, but mandates philosophical consideration.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            
+            <div class="mt-6 p-4 bg-white border-l-4 border-amber-500 rounded-r-lg shadow-sm">
+                <p class="text-sm text-stone-700">
+                    <strong>Author's Note (SAMUELSON G.):</strong> "Innovation without ethical foresight is a liability. The future of nanotechnology hinges not just on our ability to manipulate atoms, but on our wisdom to regulate the consequences."
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-6 text-center text-sm mt-auto">
+        <p>&copy; 2026 NanoTech Research Documentation. Authored by SAMUELSON G. Published via Interactive Data Dashboard.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- State Management ---
+        const state = {
+            activeTab: 'summary',
+            chartsRendered: false
+        };
+
+        // --- Data Storage (Source Report Data) ---
+        const reportData = {
+            marketGrowth: {
+                labels: ['2020', '2022', '2024', '2026', '2028', '2030'],
+                data: [54, 65, 79, 130, 210, 332]
+            },
+            sectorAllocation: {
+                labels: ['Medicine & Pharma', 'Electronics & IT', 'Materials & Mfg', 'Energy', 'Other'],
+                data: [40, 30, 15, 10, 5]
+            },
+            publicSentiment: {
+                labels: ['Optimistic', 'Skeptical', 'Neutral'],
+                data: [65, 20, 15]
+            }
+        };
+
+        // Chart Instances
+        let marketChartInstance = null;
+        let sectorChartInstance = null;
+        let sentimentChartInstance = null;
+
+        // --- Functional Navigation ---
+        function switchTab(tabId) {
+            // Update State
+            state.activeTab = tabId;
+
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Show selected tab
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // Update tab button styles
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Lazy load charts if Data tab is clicked
+            if (tabId === 'data' && !state.chartsRendered) {
+                renderCharts();
+                state.chartsRendered = true;
+            }
+        }
+
+        // --- Interactive UI Elements ---
+        function toggleDetails(elementId) {
+            const el = document.getElementById(elementId);
+            const iconId = elementId.replace('-details', '-icon');
+            const icon = document.getElementById(iconId);
+            
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.innerHTML = '&#8722;'; // Minus sign
+            } else {
+                el.classList.add('hidden');
+                icon.innerHTML = '&#43;'; // Plus sign
+            }
+        }
+
+        // --- Chart.js Implementation ---
+        function renderCharts() {
+            // Common Options for responsiveness and styling within strict containers
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false, // CRITICAL: allows chart to fill the custom .chart-container height
+                plugins: {
+                    legend: { position: 'bottom', labels: { font: { family: "'Segoe UI', sans-serif" } } },
+                    tooltip: {
+                        backgroundColor: 'rgba(41, 37, 36, 0.9)', // stone-800
+                        titleFont: { size: 14, family: "'Segoe UI', sans-serif" },
+                        bodyFont: { size: 13, family: "'Segoe UI', sans-serif" },
+                        padding: 10,
+                        cornerRadius: 4
+                    }
+                }
+            };
+
+            // 1. Market Growth Line Chart
+            const ctxMarket = document.getElementById('marketChart').getContext('2d');
+            marketChartInstance = new Chart(ctxMarket, {
+                type: 'line',
+                data: {
+                    labels: reportData.marketGrowth.labels,
+                    datasets: [{
+                        label: 'Market Value (Billion $)',
+                        data: reportData.marketGrowth.data,
+                        borderColor: '#0f766e', // teal-700
+                        backgroundColor: 'rgba(15, 118, 110, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#d97706', // amber-600
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        fill: true,
+                        tension: 0.3 // Smooth curves
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#f5f5f4' } // stone-100 
+                        },
+                        x: { 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+
+            // 2. Sector Allocation Doughnut Chart
+            const ctxSector = document.getElementById('sectorChart').getContext('2d');
+            sectorChartInstance = new Chart(ctxSector, {
+                type: 'doughnut',
+                data: {
+                    labels: reportData.sectorAllocation.labels,
+                    datasets: [{
+                        data: reportData.sectorAllocation.data,
+                        backgroundColor: [
+                            '#0f766e', // teal-700
+                            '#0ea5e9', // sky-500
+                            '#d97706', // amber-600
+                            '#10b981', // emerald-500
+                            '#a8a29e'  // stone-400
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    cutout: '65%',
+                    plugins: {
+                        ...commonOptions.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 3. Sentiment Bar Chart
+            const ctxSentiment = document.getElementById('sentimentChart').getContext('2d');
+            sentimentChartInstance = new Chart(ctxSentiment, {
+                type: 'bar',
+                data: {
+                    labels: reportData.publicSentiment.labels,
+                    datasets: [{
+                        label: 'Percentage of Respondents (%)',
+                        data: reportData.publicSentiment.data,
+                        backgroundColor: [
+                            'rgba(20, 184, 166, 0.8)', // teal-500
+                            'rgba(245, 158, 11, 0.8)', // amber-500
+                            'rgba(168, 162, 158, 0.8)' // stone-400
+                        ],
+                        borderColor: [
+                            '#0d9488',
+                            '#d97706',
+                            '#78716c'
+                        ],
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    indexAxis: 'y', // Horizontal bar chart for better label reading
+                    scales: {
+                        x: { 
+                            beginAtZero: true, 
+                            max: 100,
+                            grid: { color: '#f5f5f4' } 
+                        },
+                        y: { 
+                            grid: { display: false } 
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }, // Hide legend as colors are self-explanatory
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
